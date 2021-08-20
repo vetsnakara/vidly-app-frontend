@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from "react"
 
 import { Like } from "./Like"
+import { Pagination } from "./Pagination"
 
+import { PAGE_SIZE } from "../constants"
 import { getMovies } from "../services/fakeMovieService"
+import { paginate } from "../utils"
 
 export function Movies({ onRemove }) {
     const [movies, setMovies] = useState([])
+    const [currentPage, setCurrentPage] = useState(1)
 
     const { length: moviesCount } = movies
 
@@ -14,9 +18,22 @@ export function Movies({ onRemove }) {
         setMovies(movies)
     }, [])
 
+    useEffect(() => {
+        if (movies.length) {
+            const moviesOnPage = paginate({
+                items: movies,
+                currentPage,
+                pageSize: PAGE_SIZE,
+            })
+
+            if (!moviesOnPage.length) {
+                setCurrentPage((currentPage) => currentPage - 1)
+            }
+        }
+    }, [movies])
+
     /**
      * Remove movie
-     * @param {*} param0
      */
     function handleRemove({ _id }) {
         setMovies((movies) => movies.filter((m) => m._id !== _id))
@@ -24,7 +41,6 @@ export function Movies({ onRemove }) {
 
     /**
      * Like/Dislike movie
-     * @param {*} param0
      */
     function handleLike({ _id, like }) {
         setMovies((movies) =>
@@ -39,7 +55,20 @@ export function Movies({ onRemove }) {
         )
     }
 
+    /**
+     * Page select
+     */
+    function handlePageChange(page) {
+        setCurrentPage(page)
+    }
+
     if (!moviesCount) return <p>There no movies in database</p>
+
+    const moviesPaginated = paginate({
+        items: movies,
+        currentPage,
+        pageSize: PAGE_SIZE,
+    })
 
     return (
         <>
@@ -57,7 +86,7 @@ export function Movies({ onRemove }) {
                     </tr>
                 </thead>
                 <tbody>
-                    {movies.map((m) => (
+                    {moviesPaginated.map((m) => (
                         <tr key={m._id}>
                             <th>{m.title}</th>
                             <td>{m.genre.name}</td>
@@ -81,6 +110,13 @@ export function Movies({ onRemove }) {
                     ))}
                 </tbody>
             </table>
+
+            <Pagination
+                itemsCount={moviesCount}
+                pageSize={PAGE_SIZE}
+                currentPage={currentPage}
+                onPageChange={handlePageChange}
+            />
         </>
     )
 }
