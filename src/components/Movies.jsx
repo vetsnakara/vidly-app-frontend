@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react"
 
+import { Like } from "./Like"
+
 import { getMovies } from "../services/fakeMovieService"
 
 export function Movies({ onRemove }) {
@@ -12,8 +14,29 @@ export function Movies({ onRemove }) {
         setMovies(movies)
     }, [])
 
+    /**
+     * Remove movie
+     * @param {*} param0
+     */
     function handleRemove({ _id }) {
         setMovies((movies) => movies.filter((m) => m._id !== _id))
+    }
+
+    /**
+     * Like/Dislike movie
+     * @param {*} param0
+     */
+    function handleLike({ _id, like }) {
+        setMovies((movies) =>
+            movies.map((movie) =>
+                movie._id === _id
+                    ? {
+                          ...movie,
+                          like: !like,
+                      }
+                    : movie
+            )
+        )
     }
 
     if (!moviesCount) return <p>There no movies in database</p>
@@ -30,6 +53,7 @@ export function Movies({ onRemove }) {
                         <th>Stock</th>
                         <th>Rate</th>
                         <th></th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -39,6 +63,12 @@ export function Movies({ onRemove }) {
                             <td>{m.genre.name}</td>
                             <td>{m.numberInStock}</td>
                             <td>{m.dailyRentalRate}</td>
+                            <td>
+                                <Like
+                                    active={m.like}
+                                    onClick={() => handleLike(m)}
+                                />
+                            </td>
                             <td>
                                 <button
                                     onClick={() => handleRemove(m)}
