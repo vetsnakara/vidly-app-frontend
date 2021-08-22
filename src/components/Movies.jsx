@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react"
 
 import { Like } from "./Like"
 import { Pagination } from "./Pagination"
+import { ListGroup } from "./ListGroup"
 
 import { PAGE_SIZE } from "../constants"
 import { getMovies } from "../services/fakeMovieService"
@@ -84,10 +85,9 @@ export function Movies({ onRemove }) {
         setCurrentPage(page)
     }
 
-    const genreMovies = _.filter(movies, (movie) => {
-        if (!currentGenre._id) return true
-        return movie.genre._id === currentGenre._id
-    })
+    const genreMovies = currentGenre._id
+        ? _.filter(movies, (movie) => movie.genre._id === currentGenre._id)
+        : movies
 
     const moviesPaginated = paginate({
         items: genreMovies,
@@ -102,29 +102,16 @@ export function Movies({ onRemove }) {
     return (
         <div className="row">
             <div className="col-3">
-                <div className="list-group">
-                    {genres.map((g) => {
-                        const isSelected = g._id === currentGenre._id
-                        let classes = "list-group-item list-group-item-action"
-
-                        if (isSelected) classes += " active"
-
-                        return (
-                            <button
-                                key={g._id}
-                                className={classes}
-                                onClick={() => handleGenreChange(g)}
-                            >
-                                {g.name}
-                            </button>
-                        )
-                    })}
-                </div>
+                <ListGroup
+                    items={genres}
+                    selectedItem={currentGenre}
+                    onItemSelect={handleGenreChange}
+                />
             </div>
-            <div className="col-9">
+            <div className="col">
                 <p>
                     Showing {moviesCount} movies{" "}
-                    {currentGenre._id ? ` of genre ${currentGenre.name}` : ""}
+                    {currentGenre._id ? ` of genre "${currentGenre.name}"` : ""}
                 </p>
 
                 <table className="table">
