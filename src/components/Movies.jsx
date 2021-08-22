@@ -1,14 +1,15 @@
 import _ from "lodash"
 import React, { useState, useEffect } from "react"
 
-import { Like } from "./Like"
-import { Pagination } from "./Pagination"
-import { ListGroup } from "./ListGroup"
+import { Like } from "./common/Like"
+import { Pagination } from "./common/Pagination"
+import { ListGroup } from "./common/ListGroup"
 
 import { PAGE_SIZE } from "../constants"
 import { getMovies } from "../services/fakeMovieService"
 import { getGenres } from "../services/fakeGenreService"
 import { paginate } from "../utils"
+import { MoviesTable } from "./MoviewTable"
 
 const defaultGenre = {
     _id: null,
@@ -58,7 +59,7 @@ export function Movies({ onRemove }) {
     /**
      * Remove movie
      */
-    function handleRemove({ _id }) {
+    function handleDelete({ _id }) {
         setMovies((movies) => movies.filter((m) => m._id !== _id))
     }
 
@@ -114,42 +115,11 @@ export function Movies({ onRemove }) {
                     {currentGenre._id ? ` of genre "${currentGenre.name}"` : ""}
                 </p>
 
-                <table className="table">
-                    <thead>
-                        <tr>
-                            <th>Title</th>
-                            <th>Genre</th>
-                            <th>Stock</th>
-                            <th>Rate</th>
-                            <th></th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {moviesPaginated.map((m) => (
-                            <tr key={m._id}>
-                                <td>{m.title}</td>
-                                <td>{m.genre.name}</td>
-                                <td>{m.numberInStock}</td>
-                                <td>{m.dailyRentalRate}</td>
-                                <td>
-                                    <Like
-                                        active={m.like}
-                                        onClick={() => handleLike(m)}
-                                    />
-                                </td>
-                                <td>
-                                    <button
-                                        onClick={() => handleRemove(m)}
-                                        className="btn btn-sm btn-danger"
-                                    >
-                                        Delete
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                <MoviesTable
+                    items={moviesPaginated}
+                    onDelete={handleDelete}
+                    onLike={handleLike}
+                />
 
                 <Pagination
                     itemsCount={moviesCount}
