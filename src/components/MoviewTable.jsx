@@ -2,21 +2,21 @@ import React from "react"
 
 import { Like } from "./common/Like"
 
-export function MoviesTable({ items, onDelete, onLike }) {
+export function MoviesTable({ movies, sortColumn, onDelete, onLike, onSort }) {
     return (
         <table className="table">
             <thead>
                 <tr>
-                    <th>Title</th>
-                    <th>Genre</th>
-                    <th>Stock</th>
-                    <th>Rate</th>
+                    <th onClick={() => handleSort("title")}>Title</th>
+                    <th onClick={() => handleSort("genre.name")}>Genre</th>
+                    <th onClick={() => handleSort("numberInStock")}>Stock</th>
+                    <th onClick={() => handleSort("dailyRentalRate")}>Rate</th>
                     <th></th>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
-                {items.map((m) => (
+                {movies.map((m) => (
                     <tr key={m._id}>
                         <td>{m.title}</td>
                         <td>{m.genre.name}</td>
@@ -38,4 +38,14 @@ export function MoviesTable({ items, onDelete, onLike }) {
             </tbody>
         </table>
     )
+
+    // Functions
+    // .........................................
+
+    function handleSort(path) {
+        onSort({
+            path,
+            direction: sortColumn.direction === "asc" ? "desc" : "asc",
+        })
+    }
 }
