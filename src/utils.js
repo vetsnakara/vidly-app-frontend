@@ -1,5 +1,6 @@
+import _ from "lodash"
+
 export function paginate({ items, currentPage, pageSize }) {
-    const start = (currentPage - 1) * pageSize
-    const end = start + pageSize
-    return items.slice(start, end)
+    const startIndex = (currentPage - 1) * pageSize
+    return _(items).slice(startIndex).take(pageSize).value()
 }
