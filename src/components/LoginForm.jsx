@@ -1,15 +1,35 @@
-import _ from "lodash"
-import React, { useState } from "react"
+import React from "react"
+
 import { Input } from "./common/Input"
+import { useForm } from "../hooks"
 
 const initState = {
     username: "",
     password: "",
 }
 
+const validationRules = {
+    username: [
+        {
+            type: "required",
+            message: "Username is required",
+        },
+    ],
+    password: [
+        {
+            type: "required",
+            message: "Password is required",
+        },
+    ],
+}
+
 export function LoginForm() {
-    const [{ username, password }, setState] = useState(initState)
-    const [errors, setErrors] = useState({})
+    const { inputs, errors, handleSubmit, handleChange } = useForm({
+        initState,
+        validationRules,
+    })
+
+    const { username, password } = inputs
 
     return (
         <>
@@ -42,48 +62,4 @@ export function LoginForm() {
             </form>
         </>
     )
-
-    // Function
-    // ......................................
-
-    /**
-     * Handle change input
-     */
-    function handleChange({ target: { name, value } }) {
-        setState((state) => ({
-            ...state,
-            [name]: value,
-        }))
-    }
-
-    /**
-     * Submit form
-     */
-    function handleSubmit(e) {
-        e.preventDefault()
-
-        const errors = validate()
-        setErrors(errors || {})
-
-        if (errors) return
-
-        setState(initState)
-    }
-
-    /**
-     * Validation
-     */
-    function validate() {
-        const errors = {}
-
-        if (!username.trim()) {
-            errors.username = "Username is required"
-        }
-
-        if (!password.trim()) {
-            errors.password = "Password is required"
-        }
-
-        return _.keys(errors).length ? errors : null
-    }
 }
