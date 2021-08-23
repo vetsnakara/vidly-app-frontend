@@ -1,4 +1,5 @@
 import React, { useState } from "react"
+import { Input } from "./common/Input"
 
 const initState = {
     username: "",
@@ -11,34 +12,25 @@ export function LoginForm() {
     return (
         <>
             <h1>Login</h1>
+
             <form className="mb-2" onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label htmlFor="username">Username</label>
-                    <input
-                        type="text"
-                        name="username"
-                        id="username"
-                        value={username}
-                        onChange={handleChange}
-                        className="form-control"
-                        placeholder="Username"
-                        autoComplete="off"
-                        autoFocus
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="password">Password</label>
-                    <input
-                        type="password"
-                        name="password"
-                        id="password"
-                        value={password}
-                        onChange={handleChange}
-                        className="form-control"
-                        placeholder="Password"
-                        autoComplete="off"
-                    />
-                </div>
+                <Input
+                    name="username"
+                    value={username}
+                    onChange={handleChange}
+                    label="Username"
+                    placeholder="Enter username"
+                    autoComplete="off"
+                />
+                <Input
+                    type="password"
+                    name="password"
+                    value={password}
+                    onChange={handleChange}
+                    label="Password"
+                    placeholder="Enter password"
+                    autoComplete="off"
+                />
 
                 <button type="submit" className="btn btn-primary">
                     Login
