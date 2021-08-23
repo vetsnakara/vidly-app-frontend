@@ -1,8 +1,7 @@
 import React from "react"
 
 import { Like } from "./common/Like"
-import { TableHeader } from "./common/TableHeader"
-import { TableBody } from "./common/TableBody"
+import { Table } from "./common/Table"
 
 export function MoviesTable({ movies, sortColumn, onDelete, onLike, onSort }) {
     const columns = [
@@ -30,13 +29,11 @@ export function MoviesTable({ movies, sortColumn, onDelete, onLike, onSort }) {
     ]
 
     return (
-        <table className="table">
-            <TableHeader
-                columns={columns}
-                sortColumn={sortColumn}
-                onSort={onSort}
-            />
-            <TableBody columns={columns} items={movies} />
-        </table>
+        <Table
+            columns={columns}
+            items={movies}
+            sortColumn={sortColumn}
+            onSort={onSort}
+        />
     )
 }
