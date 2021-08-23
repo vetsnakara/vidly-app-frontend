@@ -32,9 +32,6 @@ export function Movies({ onRemove }) {
 
         setMovies(movies)
         setGenres([defaultGenre, ...genres])
-
-        console.log("movies", movies)
-        console.log("genres", genres)
     }, [])
 
     useEffect(() => {

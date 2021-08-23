@@ -1,51 +1,42 @@
 import React from "react"
 
 import { Like } from "./common/Like"
+import { TableHeader } from "./common/TableHeader"
+import { TableBody } from "./common/TableBody"
 
 export function MoviesTable({ movies, sortColumn, onDelete, onLike, onSort }) {
+    const columns = [
+        { path: "title", label: "Title" },
+        { path: "genre.name", label: "Genre" },
+        { path: "numberInStock", label: "Stock" },
+        { path: "dailyRentalRate", label: "Rate" },
+        {
+            key: "like",
+            value: (movie) => (
+                <Like active={movie.like} onClick={() => onLike(movie)} />
+            ),
+        },
+        {
+            key: "deleteBtn",
+            value: (movie) => (
+                <button
+                    onClick={() => onDelete(movie)}
+                    className="btn btn-sm btn-danger"
+                >
+                    Delete
+                </button>
+            ),
+        },
+    ]
+
     return (
         <table className="table">
-            <thead>
-                <tr>
-                    <th onClick={() => handleSort("title")}>Title</th>
-                    <th onClick={() => handleSort("genre.name")}>Genre</th>
-                    <th onClick={() => handleSort("numberInStock")}>Stock</th>
-                    <th onClick={() => handleSort("dailyRentalRate")}>Rate</th>
-                    <th></th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                {movies.map((m) => (
-                    <tr key={m._id}>
-                        <td>{m.title}</td>
-                        <td>{m.genre.name}</td>
-                        <td>{m.numberInStock}</td>
-                        <td>{m.dailyRentalRate}</td>
-                        <td>
-                            <Like active={m.like} onClick={() => onLike(m)} />
-                        </td>
-                        <td>
-                            <button
-                                onClick={() => onDelete(m)}
-                                className="btn btn-sm btn-danger"
-                            >
-                                Delete
-                            </button>
-                        </td>
-                    </tr>
-                ))}
-            </tbody>
+            <TableHeader
+                columns={columns}
+                sortColumn={sortColumn}
+                onSort={onSort}
+            />
+            <TableBody columns={columns} items={movies} />
         </table>
     )
-
-    // Functions
-    // .........................................
-
-    function handleSort(path) {
-        onSort({
-            path,
-            direction: sortColumn.direction === "asc" ? "desc" : "asc",
-        })
-    }
 }
