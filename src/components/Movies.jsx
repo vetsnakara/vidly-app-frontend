@@ -48,23 +48,7 @@ export function Movies({ onRemove }) {
         }
     }, [movies])
 
-    const moviesFiltered = currentGenre._id
-        ? _.filter(movies, (movie) => movie.genre._id === currentGenre._id)
-        : movies
-
-    const moviesSorted = _.orderBy(
-        moviesFiltered,
-        sortColumn.path,
-        sortColumn.direction
-    )
-
-    const moviesPaginated = paginate({
-        items: moviesSorted,
-        currentPage,
-        pageSize: PAGE_SIZE,
-    })
-
-    const { length: moviesCount } = moviesFiltered
+    const { moviesCount, moviesPaginated } = getPagedMovies()
 
     return (
         <div className="row">
@@ -76,7 +60,10 @@ export function Movies({ onRemove }) {
                 />
             </div>
             <div className="col">
-                {renderCountMessage()}
+                {renderCountMessage({
+                    count: moviesCount,
+                    genre: currentGenre,
+                })}
 
                 {moviesPaginated.length > 0 && (
                     <MoviesTable
@@ -101,17 +88,38 @@ export function Movies({ onRemove }) {
     // Function
     // ............................................
 
+    function getPagedMovies() {
+        const moviesFiltered = currentGenre._id
+            ? _.filter(movies, (movie) => movie.genre._id === currentGenre._id)
+            : movies
+
+        const moviesSorted = _.orderBy(
+            moviesFiltered,
+            sortColumn.path,
+            sortColumn.direction
+        )
+
+        const moviesPaginated = paginate({
+            items: moviesSorted,
+            currentPage,
+            pageSize: PAGE_SIZE,
+        })
+
+        return {
+            moviesCount: moviesFiltered.length,
+            moviesPaginated,
+        }
+    }
+
     /**
      * Count message
      */
-    function renderCountMessage() {
-        if (!moviesCount) {
+    function renderCountMessage({ count, genre }) {
+        if (!count) {
             return (
                 <p>
                     There no movies
-                    {currentGenre._id
-                        ? ` of genre "${currentGenre.name}"`
-                        : " "}
+                    {genre._id ? ` of genre "${genre.name}"` : " "}
                     in database
                 </p>
             )
@@ -119,8 +127,8 @@ export function Movies({ onRemove }) {
 
         return (
             <p>
-                Showing {moviesCount} movies{" "}
-                {currentGenre._id ? ` of genre "${currentGenre.name}"` : ""}
+                Showing {count} movies{" "}
+                {genre._id ? ` of genre "${genre.name}"` : ""}
             </p>
         )
     }
