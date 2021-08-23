@@ -18,8 +18,6 @@ export function TableBody({ columns, items, idFieldName = "_id" }) {
  */
 function renderCell(col, item) {
     const key = col.path || col.key
-
-    const value = col.path ? _.get(item, col.path) : col.value(item)
-
+    const value = col.value ? col.value(item) : _.get(item, col.path)
     return <td key={key}>{value}</td>
 }
