@@ -5,13 +5,13 @@ import {
     Redirect,
 } from "react-router-dom"
 
-import { Navigation } from "./components/Navigation"
-
 import { Movies } from "./components/Movies"
 import { Customers } from "./components/Customers"
 import { Rentals } from "./components/Rentals"
 import { NotFound } from "./components/NotFound"
 import { MovieForm } from "./components/MovieForm"
+import { LoginForm } from "./components/LoginForm"
+import { Navigation } from "./components/Navigation"
 
 function App() {
     return (
@@ -19,6 +19,7 @@ function App() {
             <Navigation className="mb-3" />
             <main className="container">
                 <Switch>
+                    <Route path="/login" component={LoginForm} />
                     <Route path="/movies/:id" component={MovieForm} />
                     <Route path="/movies" component={Movies} />
                     <Route path="/customers" component={Customers} />
