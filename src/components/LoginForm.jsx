@@ -1,3 +1,4 @@
+import _ from "lodash"
 import React, { useState } from "react"
 import { Input } from "./common/Input"
 
@@ -8,6 +9,7 @@ const initState = {
 
 export function LoginForm() {
     const [{ username, password }, setState] = useState(initState)
+    const [errors, setErrors] = useState({})
 
     return (
         <>
@@ -17,6 +19,7 @@ export function LoginForm() {
                 <Input
                     name="username"
                     value={username}
+                    error={errors.username}
                     onChange={handleChange}
                     label="Username"
                     placeholder="Enter username"
@@ -26,6 +29,7 @@ export function LoginForm() {
                     type="password"
                     name="password"
                     value={password}
+                    error={errors.password}
                     onChange={handleChange}
                     label="Password"
                     placeholder="Enter password"
@@ -42,6 +46,9 @@ export function LoginForm() {
     // Function
     // ......................................
 
+    /**
+     * Handle change input
+     */
     function handleChange({ target: { name, value } }) {
         setState((state) => ({
             ...state,
@@ -49,9 +56,34 @@ export function LoginForm() {
         }))
     }
 
+    /**
+     * Submit form
+     */
     function handleSubmit(e) {
         e.preventDefault()
-        console.log("submit", username, password)
+
+        const errors = validate()
+        setErrors(errors || {})
+
+        if (errors) return
+
         setState(initState)
+    }
+
+    /**
+     * Validation
+     */
+    function validate() {
+        const errors = {}
+
+        if (!username.trim()) {
+            errors.username = "Username is required"
+        }
+
+        if (!password.trim()) {
+            errors.password = "Password is required"
+        }
+
+        return _.keys(errors).length ? errors : null
     }
 }

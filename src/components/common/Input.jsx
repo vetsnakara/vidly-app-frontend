@@ -4,6 +4,7 @@ export function Input({
     name,
     value,
     label,
+    error,
     type = "text",
     onChange,
     ...props
@@ -20,6 +21,7 @@ export function Input({
                 className="form-control"
                 {...props}
             />
+            {error && <div className="alert alert-danger">{error}</div>}
         </div>
     )
 }
