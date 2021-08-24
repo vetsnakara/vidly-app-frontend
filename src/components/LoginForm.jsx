@@ -1,33 +1,22 @@
 import React from "react"
 
-import { Input } from "./common/Input"
 import { useForm } from "../hooks"
+import schema from "../validation"
+
+import { Input } from "./common/Input"
 
 const initState = {
     username: "",
     password: "",
 }
 
-const validationRules = {
-    username: [
-        {
-            type: "required",
-            message: "Username is required",
-        },
-    ],
-    password: [
-        {
-            type: "required",
-            message: "Password is required",
-        },
-    ],
+const options = {
+    initState,
+    validationSchema: schema.loginForm,
 }
 
 export function LoginForm() {
-    const { inputs, errors, handleSubmit, handleChange } = useForm({
-        initState,
-        validationRules,
-    })
+    const { inputs, errors, handleSubmit, handleChange } = useForm(options)
 
     const { username, password } = inputs
 

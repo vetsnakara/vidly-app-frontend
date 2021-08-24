@@ -1,7 +1,8 @@
 import { useState } from "react"
 import _ from "lodash"
+import Joi from "joi-browser"
 
-export function useForm({ initState, validationRules }) {
+export function useForm({ initState, validationSchema }) {
     const [inputs, setInputs] = useState(initState)
     const [errors, setErrors] = useState({})
 
@@ -18,7 +19,7 @@ export function useForm({ initState, validationRules }) {
     function handleSubmit(e) {
         e.preventDefault()
 
-        const validationErrors = validateForm()
+        const validationErrors = validate(inputs, validationSchema)
 
         setErrors(validationErrors || {})
 
@@ -31,42 +32,36 @@ export function useForm({ initState, validationRules }) {
             [name]: value,
         }))
 
-        const errorMessage = validateInput(name, value, validationRules[name])
+        const inputObj = { [name]: value }
+
+        const inputSchema = {
+            [name]: validationSchema[name],
+        }
+
+        const error = validate(inputObj, inputSchema)
+        const errorMsg = error ? error[name] : null
 
         setErrors((errors) => ({
             ...errors,
-            [name]: errorMessage,
+            [name]: errorMsg,
         }))
     }
 
-    function validateForm() {
-        const errors = {}
+    function validate(obj, schema) {
+        const options = { abortEarly: false }
+        const { error } = Joi.validate(obj, schema, options)
 
-        _.each(validationRules, (rules, name) => {
-            const errorMessage = validateInput(name, inputs[name], rules)
-            if (errorMessage) errors[name] = errorMessage
-        })
+        if (!error) return null
 
-        return _.keys(errors).length ? errors : null
-    }
-}
+        const errors = _.reduce(
+            error.details,
+            (errors, { message, path: [field] }) => {
+                errors[field] = message
+                return errors
+            },
+            {}
+        )
 
-function validateInput(name, value, rules) {
-    for (let i = 0; i < rules.length; i++) {
-        const errorMessage = validateByRule(name, value, rules[i])
-        if (errorMessage) return errorMessage
-    }
-
-    return null
-}
-
-function validateByRule(name, value, rule) {
-    const { type, message } = rule
-
-    switch (type) {
-        case "required":
-            return !value.trim() ? message : null
-        default:
-            return null
+        return errors
     }
 }
