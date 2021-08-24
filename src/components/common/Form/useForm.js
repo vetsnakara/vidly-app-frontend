@@ -1,16 +1,25 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import _ from "lodash"
 import Joi from "joi-browser"
 
-export function useForm({ initState, validationSchema }) {
-    const [inputs, setInputs] = useState(initState)
+export function useForm({
+    state,
+    validationSchema,
+    isFormValid = true,
+    submitCallback,
+}) {
+    const [inputs, setInputs] = useState(state)
     const [errors, setErrors] = useState({})
-    const [hasErrors, setHasErrors] = useState(true)
+    const [isValid, setIsValid] = useState(isFormValid)
+
+    useEffect(() => {
+        setInputs(state)
+    }, [state])
 
     return {
         inputs,
         errors,
-        hasErrors,
+        isValid,
         handleSubmit,
         handleChange,
     }
@@ -26,6 +35,8 @@ export function useForm({ initState, validationSchema }) {
         setErrors(validationErrors || {})
 
         if (validationErrors) return
+
+        submitCallback(inputs)
     }
 
     function handleChange({ target: { name, value } }) {
@@ -54,7 +65,7 @@ export function useForm({ initState, validationSchema }) {
             [name]: errorMessage,
         }))
 
-        setHasErrors(Boolean(validationErrors))
+        setIsValid(!Boolean(validationErrors))
     }
 
     function validate(obj, schema) {

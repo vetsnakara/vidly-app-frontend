@@ -6,15 +6,16 @@ import { Form } from "./common/Form/Form"
 import { FormInput as Input } from "./common/Form/FormInput"
 import { FormButton as Button } from "./common/Form/FormButton"
 
-const initState = {
+const state = {
     username: "",
     password: "",
     name: "",
 }
 
 const options = {
-    initState,
+    state,
     validationSchema: schema.registerForm,
+    isFormValid: false,
 }
 
 export function RegisterForm() {

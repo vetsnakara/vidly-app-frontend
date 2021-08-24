@@ -4,10 +4,10 @@ import { Button } from "../Button"
 import { formContext } from "./Form"
 
 export function FormButton({ children, ...rest }) {
-    const { hasErrors } = useContext(formContext)
+    const { isValid } = useContext(formContext)
 
     return (
-        <Button disabled={hasErrors} {...rest}>
+        <Button disabled={!isValid} {...rest}>
             {children}
         </Button>
     )

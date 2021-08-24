@@ -9,6 +9,7 @@ import { getMovies } from "../services/fakeMovieService"
 import { getGenres } from "../services/fakeGenreService"
 import { paginate } from "../utils"
 import { MoviesTable } from "./MoviewTable"
+import { Link } from "react-router-dom"
 
 const defaultGenre = {
     _id: null,
@@ -60,6 +61,10 @@ export function Movies({ onRemove }) {
                 />
             </div>
             <div className="col">
+                <Link to="/movies/new" className="btn btn-primary mb-2">
+                    New Movie
+                </Link>
+
                 {renderCountMessage({
                     count: moviesCount,
                     genre: currentGenre,
