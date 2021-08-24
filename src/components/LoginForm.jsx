@@ -16,7 +16,8 @@ const options = {
 }
 
 export function LoginForm() {
-    const { inputs, errors, handleSubmit, handleChange } = useForm(options)
+    const { inputs, errors, hasErrors, handleSubmit, handleChange } =
+        useForm(options)
 
     const { username, password } = inputs
 
@@ -45,7 +46,11 @@ export function LoginForm() {
                     autoComplete="off"
                 />
 
-                <button type="submit" className="btn btn-primary">
+                <button
+                    disabled={hasErrors}
+                    type="submit"
+                    className="btn btn-primary"
+                >
                     Login
                 </button>
             </form>

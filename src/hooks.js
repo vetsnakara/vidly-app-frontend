@@ -1,14 +1,18 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import _ from "lodash"
 import Joi from "joi-browser"
 
 export function useForm({ initState, validationSchema }) {
     const [inputs, setInputs] = useState(initState)
     const [errors, setErrors] = useState({})
+    const [hasErrors, setHasErrors] = useState(true)
+
+    console.log(hasErrors)
 
     return {
         inputs,
         errors,
+        hasErrors,
         handleSubmit,
         handleChange,
     }
@@ -27,24 +31,32 @@ export function useForm({ initState, validationSchema }) {
     }
 
     function handleChange({ target: { name, value } }) {
-        setInputs((inputs) => ({
+        const inputsUpdated = {
             ...inputs,
             [name]: value,
-        }))
-
-        const inputObj = { [name]: value }
-
-        const inputSchema = {
-            [name]: validationSchema[name],
         }
 
-        const error = validate(inputObj, inputSchema)
-        const errorMsg = error ? error[name] : null
+        const options = { abortEarly: false }
+
+        const validationErrors = validate(
+            inputsUpdated,
+            validationSchema,
+            options
+        )
+
+        const errorMessage =
+            validationErrors && validationErrors[name]
+                ? validationErrors[name]
+                : null
+
+        setInputs(inputsUpdated)
 
         setErrors((errors) => ({
             ...errors,
-            [name]: errorMsg,
+            [name]: errorMessage,
         }))
+
+        setHasErrors(Boolean(validationErrors))
     }
 
     function validate(obj, schema) {
