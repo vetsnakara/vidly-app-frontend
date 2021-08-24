@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import _ from "lodash"
 import Joi from "joi-browser"
 
@@ -6,8 +6,6 @@ export function useForm({ initState, validationSchema }) {
     const [inputs, setInputs] = useState(initState)
     const [errors, setErrors] = useState({})
     const [hasErrors, setHasErrors] = useState(true)
-
-    console.log(hasErrors)
 
     return {
         inputs,

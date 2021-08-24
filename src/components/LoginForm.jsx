@@ -1,9 +1,10 @@
 import React from "react"
 
-import { useForm } from "../hooks"
 import schema from "../validation"
+import { Form } from "./common/Form/Form"
 
-import { Input } from "./common/Input"
+import { FormInput as Input } from "./common/Form/FormInput"
+import { FormButton as Button } from "./common/Form/FormButton"
 
 const initState = {
     username: "",
@@ -16,21 +17,13 @@ const options = {
 }
 
 export function LoginForm() {
-    const { inputs, errors, hasErrors, handleSubmit, handleChange } =
-        useForm(options)
-
-    const { username, password } = inputs
-
     return (
         <>
             <h1>Login</h1>
 
-            <form className="mb-2" onSubmit={handleSubmit}>
+            <Form options={options}>
                 <Input
                     name="username"
-                    value={username}
-                    error={errors.username}
-                    onChange={handleChange}
                     label="Username"
                     placeholder="Enter username"
                     autoComplete="off"
@@ -38,22 +31,12 @@ export function LoginForm() {
                 <Input
                     type="password"
                     name="password"
-                    value={password}
-                    error={errors.password}
-                    onChange={handleChange}
                     label="Password"
                     placeholder="Enter password"
                     autoComplete="off"
                 />
-
-                <button
-                    disabled={hasErrors}
-                    type="submit"
-                    className="btn btn-primary"
-                >
-                    Login
-                </button>
-            </form>
+                <Button type="submit">Login</Button>
+            </Form>
         </>
     )
 }

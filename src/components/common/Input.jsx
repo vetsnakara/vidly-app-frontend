@@ -3,8 +3,8 @@ import React from "react"
 export function Input({
     name,
     value,
-    label,
     error,
+    label,
     type = "text",
     onChange,
     ...props
