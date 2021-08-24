@@ -6,6 +6,7 @@ export function Input({
     error,
     label,
     type = "text",
+    autoComplete = "off",
     onChange,
     ...props
 }) {
@@ -18,6 +19,7 @@ export function Input({
                 id={name}
                 value={value}
                 onChange={onChange}
+                autoComplete={autoComplete}
                 className="form-control"
                 {...props}
             />
