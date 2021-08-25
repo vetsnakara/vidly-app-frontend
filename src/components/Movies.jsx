@@ -1,15 +1,19 @@
 import _ from "lodash"
+
 import React, { useState, useEffect } from "react"
+import { Link } from "react-router-dom"
 
 import { Pagination } from "./common/Pagination"
 import { ListGroup } from "./common/ListGroup"
 
-import { PAGE_SIZE } from "../constants"
 import { getMovies } from "../services/fakeMovieService"
 import { getGenres } from "../services/fakeGenreService"
-import { paginate } from "../utils"
+
 import { MoviesTable } from "./MoviewTable"
-import { Link } from "react-router-dom"
+import { Search } from "./common/Search"
+
+import { PAGE_SIZE } from "../constants"
+import { paginate } from "../utils"
 
 const defaultGenre = {
     _id: null,
@@ -20,6 +24,7 @@ export function Movies({ onRemove }) {
     const [movies, setMovies] = useState([])
     const [genres, setGenres] = useState([])
 
+    const [searchTerm, setSearchTerm] = useState("")
     const [currentPage, setCurrentPage] = useState(1)
     const [currentGenre, setCurrentGenre] = useState(defaultGenre)
     const [sortColumn, setSortColumn] = useState({
@@ -61,7 +66,7 @@ export function Movies({ onRemove }) {
                 />
             </div>
             <div className="col">
-                <Link to="/movies/new" className="btn btn-primary mb-2">
+                <Link to="/movies/new" className="btn btn-primary mb-3">
                     New Movie
                 </Link>
 
@@ -69,6 +74,12 @@ export function Movies({ onRemove }) {
                     count: moviesCount,
                     genre: currentGenre,
                 })}
+
+                <Search
+                    value={searchTerm}
+                    onChange={handleSearch}
+                    placeholder="Search ..."
+                />
 
                 {moviesPaginated.length > 0 && (
                     <MoviesTable
@@ -90,13 +101,24 @@ export function Movies({ onRemove }) {
         </div>
     )
 
-    // Function
+    // Functions
     // ............................................
 
     function getPagedMovies() {
-        const moviesFiltered = currentGenre._id
-            ? _.filter(movies, (movie) => movie.genre._id === currentGenre._id)
-            : movies
+        let moviesFiltered = movies
+
+        if (currentGenre._id) {
+            moviesFiltered = _.filter(
+                movies,
+                (movie) => movie.genre._id === currentGenre._id
+            )
+        }
+
+        if (searchTerm) {
+            moviesFiltered = _.filter(moviesFiltered, (movie) =>
+                movie.title.toLowerCase().includes(searchTerm)
+            )
+        }
 
         const moviesSorted = _.orderBy(
             moviesFiltered,
@@ -139,6 +161,15 @@ export function Movies({ onRemove }) {
     }
 
     /**
+     * Search
+     */
+    function handleSearch(term) {
+        setSearchTerm(term)
+        setCurrentGenre(defaultGenre)
+        setCurrentPage(1)
+    }
+
+    /**
      * Sorting
      */
     function handleSort(column) {
@@ -152,6 +183,7 @@ export function Movies({ onRemove }) {
     function handleGenreChange(genre) {
         setCurrentGenre(genre)
         setCurrentPage(1)
+        setSearchTerm("")
     }
 
     /**
