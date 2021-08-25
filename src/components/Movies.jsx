@@ -3,11 +3,13 @@ import _ from "lodash"
 import React, { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 
+import { toast } from "react-toastify"
+
 import { Pagination } from "./common/Pagination"
 import { ListGroup } from "./common/ListGroup"
 
-import { getMovies } from "../services/fakeMovieService"
-import { getGenres } from "../services/fakeGenreService"
+import { getMovies, deleteMovie } from "../services/movieService"
+import { getGenres } from "../services/genreService"
 
 import { MoviesTable } from "./MoviewTable"
 import { Search } from "./common/Search"
@@ -31,14 +33,44 @@ export function Movies({ onRemove }) {
         path: "title",
         direction: "asc",
     })
+    const [movieToDelete, setMovieToDelete] = useState(null)
 
     useEffect(() => {
-        const movies = getMovies()
-        const genres = getGenres()
+        ;(async function getInitialData() {
+            try {
+                const [movies, genres] = await Promise.all([
+                    getMovies(),
+                    getGenres(),
+                ])
 
-        setMovies(movies)
-        setGenres([defaultGenre, ...genres])
+                setMovies(movies)
+                setGenres([defaultGenre, ...genres])
+            } catch (error) {
+                // todo: expected or not?
+                console.log(error)
+            }
+        })()
     }, [])
+
+    useEffect(() => {
+        if (movieToDelete) {
+            const { id } = movieToDelete
+
+            ;(async function removeMovie() {
+                try {
+                    await deleteMovie(id)
+
+                    setMovies((movies) => movies.filter((m) => m._id !== id))
+                } catch (error) {
+                    // handle only expected errors here
+                    if (error.response && error.response.status === 404) {
+                        toast.error("This movie has already been deleted")
+                        console.log(error)
+                    }
+                }
+            })()
+        }
+    }, [movieToDelete])
 
     useEffect(() => {
         if (movies.length) {
@@ -189,8 +221,8 @@ export function Movies({ onRemove }) {
     /**
      * Remove movie
      */
-    function handleDelete({ _id }) {
-        setMovies((movies) => movies.filter((m) => m._id !== _id))
+    function handleDelete({ _id: id }) {
+        setMovieToDelete({ id })
     }
 
     /**
