@@ -11,7 +11,7 @@ const schema = {
         name: Joi.string().required().label("Name"),
     },
     movieForm: {
-        title: Joi.string().required().label("Title"),
+        title: Joi.string().required().min(5).label("Title"),
         genreId: Joi.string().required().label("Genre"),
         numberInStock: Joi.number()
             .required()

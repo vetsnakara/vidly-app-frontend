@@ -36,55 +36,17 @@ export function Movies({ onRemove }) {
     const [movieToDelete, setMovieToDelete] = useState(null)
 
     useEffect(() => {
-        ;(async function getInitialData() {
-            try {
-                const [movies, genres] = await Promise.all([
-                    getMovies(),
-                    getGenres(),
-                ])
-
-                setMovies(movies)
-                setGenres([defaultGenre, ...genres])
-            } catch (error) {
-                // todo: expected or not?
-                console.log(error)
-            }
-        })()
+        fetchInitialData()
     }, [])
 
     useEffect(() => {
         if (movieToDelete) {
             const { id } = movieToDelete
-
-            ;(async function removeMovie() {
-                try {
-                    await deleteMovie(id)
-
-                    setMovies((movies) => movies.filter((m) => m._id !== id))
-                } catch (error) {
-                    // handle only expected errors here
-                    if (error.response && error.response.status === 404) {
-                        toast.error("This movie has already been deleted")
-                        console.log(error)
-                    }
-                }
-            })()
+            removeMovie(id)
         }
     }, [movieToDelete])
 
-    useEffect(() => {
-        if (movies.length) {
-            const moviesOnPage = paginate({
-                items: movies,
-                currentPage,
-                pageSize: PAGE_SIZE,
-            })
-
-            if (!moviesOnPage.length) {
-                setCurrentPage((currentPage) => currentPage - 1)
-            }
-        }
-    }, [movies])
+    useEffect(setPage, [movies])
 
     const { moviesCount, moviesPaginated } = getPagedMovies()
 
@@ -135,6 +97,48 @@ export function Movies({ onRemove }) {
 
     // Functions
     // ............................................
+
+    async function fetchInitialData() {
+        try {
+            const [movies, genres] = await Promise.all([
+                getMovies(),
+                getGenres(),
+            ])
+
+            setMovies(movies)
+            setGenres([defaultGenre, ...genres])
+        } catch (error) {
+            // todo: expected or not?
+            console.error(error)
+        }
+    }
+
+    async function removeMovie(id) {
+        try {
+            await deleteMovie(id)
+
+            setMovies((movies) => movies.filter((m) => m._id !== id))
+        } catch (error) {
+            if (error.response && error.response.status === 404) {
+                toast.error("This movie has already been deleted")
+            }
+            console.error(error)
+        }
+    }
+
+    function setPage() {
+        if (movies.length) {
+            const moviesOnPage = paginate({
+                items: movies,
+                currentPage,
+                pageSize: PAGE_SIZE,
+            })
+
+            if (!moviesOnPage.length) {
+                setCurrentPage((currentPage) => currentPage - 1)
+            }
+        }
+    }
 
     function getPagedMovies() {
         let moviesFiltered = movies

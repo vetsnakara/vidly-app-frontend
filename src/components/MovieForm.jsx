@@ -8,8 +8,8 @@ import { FormSelect as Select } from "./common/Form/FormSelect"
 
 import schema from "../validation"
 
-import { getMovie, saveMovie } from "../services/fakeMovieService"
-import { getGenres } from "../services/fakeGenreService"
+import { getMovie, saveMovie } from "../services/movieService"
+import { getGenres } from "../services/genreService"
 
 export function MovieForm() {
     const history = useHistory()
@@ -23,19 +23,12 @@ export function MovieForm() {
     const options = getOptions(movie)
 
     useEffect(() => {
-        if (id) {
-            const movie = getMovie(id)
-            setMovie(mapDbMovieObject(movie))
-        }
-
-        const genres = getGenres()
-        setGenres(genres)
+        fetchFormData()
     }, [])
 
     useEffect(() => {
-        if (submitCount > 0) {
-            saveMovie(movie)
-            history.push("/movies")
+        if (submitCount) {
+            saveFormData()
         }
     }, [submitCount])
 
@@ -72,6 +65,32 @@ export function MovieForm() {
 
     // Functions
     // ....................................................
+
+    async function fetchFormData() {
+        try {
+            const [genres, movie] = await Promise.all([
+                getGenres(),
+                id ? getMovie(id) : null,
+            ])
+
+            setGenres(genres)
+            if (movie) setMovie(mapDbMovieObject(movie))
+        } catch (error) {
+            if (error.response && error.response.status === 404) {
+                history.replace("/not-found")
+            }
+            console.error(error)
+        }
+    }
+
+    async function saveFormData() {
+        try {
+            await saveMovie(movie)
+            history.push("/movies")
+        } catch (error) {
+            console.error(error)
+        }
+    }
 
     function handleSubmit(movie) {
         setMovie((prevMovie) => ({
