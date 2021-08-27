@@ -11,7 +11,6 @@ import * as actions from "../actions"
 import { Form } from "./common/Form/Form"
 import { FormInput as Input } from "./common/Form/FormInput"
 import { FormButton as Button } from "./common/Form/FormButton"
-import { getUserFromToken } from "../utils"
 
 const state = {
     username: "",
@@ -72,15 +71,10 @@ export function RegisterForm() {
         setUser({ ...user })
     }
 
-    async function registerUser(user) {
+    async function registerUser(userData) {
         try {
-            const {
-                data: { token },
-            } = await register(user)
-            const userDecoded = getUserFromToken(token)
-
-            window.localStorage.setItem("token", token)
-            appDispatch(actions.login(userDecoded))
+            const user = await register(userData)
+            appDispatch(actions.login(user))
             history.push("/")
         } catch (error) {
             if (error.response && error.response.status === 400) {

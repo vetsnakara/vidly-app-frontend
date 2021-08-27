@@ -5,12 +5,14 @@ import * as actions from "../actions"
 
 import { dispatchContext } from "./StateProvider"
 
+import { logout } from "../services/authService"
+
 export function Logout() {
     const history = useHistory()
     const appDispatch = useContext(dispatchContext)
 
     useEffect(() => {
-        window.localStorage.removeItem("token")
+        logout()
         appDispatch(actions.logout())
         history.push("/")
     }, [])

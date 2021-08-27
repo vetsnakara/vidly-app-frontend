@@ -1,15 +1,13 @@
 import React, { createContext, useReducer } from "react"
 
 import { appReducer } from "../reducer"
-import { getUserFromToken } from "../utils"
+import { getCurrentUser } from "../services/authService"
 
 const stateContext = createContext()
 const dispatchContext = createContext()
 
-const token = window.localStorage.getItem("token")
-
 const appState = {
-    user: getUserFromToken(token),
+    user: getCurrentUser(),
 }
 
 export function StateProvider({ children }) {

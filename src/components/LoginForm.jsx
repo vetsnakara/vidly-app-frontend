@@ -12,7 +12,6 @@ import { dispatchContext } from "./StateProvider"
 
 import schema from "../validation"
 import { login } from "../services/authService"
-import { getUserFromToken } from "../utils"
 
 const state = {
     username: "",
@@ -60,11 +59,8 @@ export function LoginForm() {
 
     async function loginUser() {
         try {
-            const { data: token } = await login(userData)
-            const userDecoded = getUserFromToken(token)
-
-            window.localStorage.setItem("token", token)
-            appDispatch(actions.login(userDecoded))
+            const user = await login(userData)
+            appDispatch(actions.login(user))
             history.push("/")
         } catch (error) {
             if (error.response && error.response.status === 400) {
