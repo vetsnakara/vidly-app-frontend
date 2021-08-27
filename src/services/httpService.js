@@ -37,9 +37,14 @@ axios.interceptors.response.use(
     }
 )
 
+function setTokenHeader(token) {
+    axios.defaults.headers.common["x-auth-token"] = token
+}
+
 export default {
     get: axios.get,
     post: axios.post,
     put: axios.put,
     delete: axios.delete,
+    setTokenHeader,
 }
