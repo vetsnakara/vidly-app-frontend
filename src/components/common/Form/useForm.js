@@ -22,6 +22,7 @@ export function useForm({
         isValid,
         handleSubmit,
         handleChange,
+        setErrors,
     }
 
     // Functions
