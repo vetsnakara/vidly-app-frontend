@@ -1,8 +1,6 @@
 import _ from "lodash"
 import http from "./httpService"
 
-// todo: create class ???
-
 const URL = "/movies"
 
 export async function getMovies() {
@@ -11,19 +9,26 @@ export async function getMovies() {
 }
 
 export async function getMovie(movieId) {
-    const { data: movie } = await http.get(`${URL}/${movieId}`)
+    const movieUrl = getMovieUrl(movieId)
+    const { data: movie } = await http.get(movieUrl)
     return movie
 }
 
 export async function saveMovie(movie) {
     if (movie._id) {
         const movieData = _.omit(movie, "_id")
-        return http.put(`${URL}/${movie._id}`, movieData)
+        const movieUrl = getMovieUrl(movie._id)
+        return http.put(movieUrl, movieData)
     }
 
     return http.post(URL, movie)
 }
 
 export async function deleteMovie(movieId) {
-    return http.delete(`${URL}/${movieId}`)
+    const movieUrl = getMovieUrl(movieId)
+    return http.delete(movieUrl)
+}
+
+function getMovieUrl(id) {
+    return `${URL}/${id}`
 }
