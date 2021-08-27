@@ -1,7 +1,11 @@
-import React from "react"
+import React, { useContext } from "react"
 import { NavLink } from "react-router-dom"
 
+import { stateContext } from "./StateProvider"
+
 export function Navigation({ className = "" }) {
+    const { user } = useContext(stateContext)
+
     let classes = "navbar navbar-expand-md navbar-light bg-light"
     classes += ` ${className}`
 
@@ -34,6 +38,11 @@ export function Navigation({ className = "" }) {
                     <li className="nav-item">
                         <NavLink className="nav-link" to="/login">
                             Login
+                        </NavLink>
+                    </li>
+                    <li className="nav-item">
+                        <NavLink className="nav-link" to="/logout">
+                            Logout
                         </NavLink>
                     </li>
                     <li className="nav-item">

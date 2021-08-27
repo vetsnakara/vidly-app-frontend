@@ -13,6 +13,7 @@ export function FormSelect({ name, label, type = "text", ...rest }) {
         <Select
             name={name}
             value={value}
+            label={label}
             error={error}
             onChange={handleChange}
             {...rest}

@@ -13,6 +13,7 @@ export function FormInput({ name, label, type = "text", ...rest }) {
         <Input
             type={type}
             name={name}
+            label={label}
             value={value}
             error={error}
             onChange={handleChange}
