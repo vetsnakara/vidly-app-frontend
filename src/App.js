@@ -1,3 +1,6 @@
+// todo: check react for the rest of use for features
+// todo: cancel requests in useEffect
+
 import {
     BrowserRouter as Router,
     Switch,

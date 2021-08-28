@@ -9,6 +9,7 @@ import { FormButton as Button } from "./common/Form/FormButton"
 import * as actions from "../actions"
 
 import { dispatchContext } from "./StateProvider"
+import { stateContext } from "./StateProvider"
 
 import schema from "../validation"
 import { login } from "../services/authService"
@@ -23,6 +24,7 @@ export function LoginForm() {
     const location = useLocation()
 
     const appDispatch = useContext(dispatchContext)
+    const { user } = useContext(stateContext)
 
     const [userData, setUserData] = useState(null)
     const [errors, setErrors] = useState(null)
@@ -34,6 +36,12 @@ export function LoginForm() {
             loginUser(userData)
         }
     }, [userData])
+
+    useEffect(() => {
+        if (user) {
+            redirect()
+        }
+    }, [user])
 
     return (
         <>
@@ -62,14 +70,7 @@ export function LoginForm() {
     async function loginUser() {
         try {
             const user = await login(userData)
-            const redirectUrl =
-                location.state && location.state.from
-                    ? location.state.from
-                    : "/"
-
             appDispatch(actions.login(user))
-
-            history.push(redirectUrl)
         } catch (error) {
             if (error.response && error.response.status === 400) {
                 setErrors({ username: error.response.data })
@@ -83,6 +84,13 @@ export function LoginForm() {
         })
 
         setUserData(data)
+    }
+
+    function redirect() {
+        const redirectUrl =
+            location.state && location.state.from ? location.state.from : "/"
+
+        history.push(redirectUrl)
     }
 
     function getOptions() {
