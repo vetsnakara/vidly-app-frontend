@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react"
-import { useHistory } from "react-router"
+import { useHistory, useLocation } from "react-router"
 import _ from "lodash"
 
 import { Form } from "./common/Form/Form"
@@ -20,6 +20,8 @@ const state = {
 
 export function LoginForm() {
     const history = useHistory()
+    const location = useLocation()
+
     const appDispatch = useContext(dispatchContext)
 
     const [userData, setUserData] = useState(null)
@@ -60,8 +62,14 @@ export function LoginForm() {
     async function loginUser() {
         try {
             const user = await login(userData)
+            const redirectUrl =
+                location.state && location.state.from
+                    ? location.state.from
+                    : "/"
+
             appDispatch(actions.login(user))
-            history.push("/")
+
+            history.push(redirectUrl)
         } catch (error) {
             if (error.response && error.response.status === 400) {
                 setErrors({ username: error.response.data })

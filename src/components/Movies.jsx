@@ -1,9 +1,11 @@
 import _ from "lodash"
 
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useContext } from "react"
 import { Link } from "react-router-dom"
 
 import { toast } from "react-toastify"
+
+import { stateContext } from "./StateProvider"
 
 import { Pagination } from "./common/Pagination"
 import { ListGroup } from "./common/ListGroup"
@@ -23,6 +25,8 @@ const defaultGenre = {
 }
 
 export function Movies({ onRemove }) {
+    const { user } = useContext(stateContext)
+
     const [movies, setMovies] = useState([])
     const [genres, setGenres] = useState([])
 
@@ -60,9 +64,11 @@ export function Movies({ onRemove }) {
                 />
             </div>
             <div className="col">
-                <Link to="/movies/new" className="btn btn-primary mb-3">
-                    New Movie
-                </Link>
+                {user && (
+                    <Link to="/movies/new" className="btn btn-primary mb-3">
+                        New Movie
+                    </Link>
+                )}
 
                 {renderCountMessage({
                     count: moviesCount,

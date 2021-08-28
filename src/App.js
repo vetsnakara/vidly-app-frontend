@@ -9,6 +9,8 @@ import { ToastContainer } from "react-toastify"
 
 import { StateProvider } from "./components/StateProvider"
 
+import { ProtectedRoute } from "./components/common/ProtectedRoute"
+
 import { Movies } from "./components/Movies"
 import { Customers } from "./components/Customers"
 import { Rentals } from "./components/Rentals"
@@ -30,8 +32,14 @@ function App() {
                             <Route path="/login" component={LoginForm} />
                             <Route path="/logout" component={Logout} />
                             <Route path="/register" component={RegisterForm} />
-                            <Route path="/movies/new" component={MovieForm} />
-                            <Route path="/movies/:id" component={MovieForm} />
+                            <ProtectedRoute
+                                path="/movies/new"
+                                component={MovieForm}
+                            />
+                            <ProtectedRoute
+                                path="/movies/:id"
+                                component={MovieForm}
+                            />
                             <Route path="/movies" component={Movies} />
                             <Route path="/customers" component={Customers} />
                             <Route path="/rentals" component={Rentals} />
