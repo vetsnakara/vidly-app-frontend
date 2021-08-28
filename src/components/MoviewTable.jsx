@@ -1,10 +1,14 @@
-import React from "react"
+import React, { useContext } from "react"
 import { Link } from "react-router-dom"
 
 import { Like } from "./common/Like"
 import { Table } from "./common/Table"
 
+import { stateContext } from "./StateProvider"
+
 export function MoviesTable({ movies, sortColumn, onDelete, onLike, onSort }) {
+    const { user } = useContext(stateContext)
+
     const columns = [
         {
             path: "title",
@@ -22,18 +26,23 @@ export function MoviesTable({ movies, sortColumn, onDelete, onLike, onSort }) {
                 <Like active={movie.like} onClick={() => onLike(movie)} />
             ),
         },
-        {
-            key: "deleteBtn",
-            value: (movie) => (
-                <button
-                    onClick={() => onDelete(movie)}
-                    className="btn btn-sm btn-danger"
-                >
-                    Delete
-                </button>
-            ),
-        },
     ]
+
+    const deleteColumn = {
+        key: "deleteBtn",
+        value: (movie) => (
+            <button
+                onClick={() => onDelete(movie)}
+                className="btn btn-sm btn-danger"
+            >
+                Delete
+            </button>
+        ),
+    }
+
+    if (user && user.isAdmin) {
+        columns.push(deleteColumn)
+    }
 
     return (
         <Table
