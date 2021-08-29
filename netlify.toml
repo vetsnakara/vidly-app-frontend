@@ -3,5 +3,6 @@
   to="/index.html"
   status=200
 
-[context.production.environment]
-  CI = false
+[[plugins]]
+  [context.production.environment]
+    CI = false
