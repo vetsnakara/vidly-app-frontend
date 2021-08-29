@@ -5,6 +5,6 @@
 
 [[plugins]]
   package = "@netlify/plugin-lighthouse"
-  
-  [context.production.environment]
-    CI = false
+
+[context.production]
+  environment = { CI = false }
