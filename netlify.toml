@@ -3,8 +3,5 @@
   to="/index.html"
   status=200
 
-[[plugins]]
-  package = "@netlify/plugin-lighthouse"
-
-[context.production]
-  environment = { CI = false }
+[context.production.environment]
+  CI = "false"
